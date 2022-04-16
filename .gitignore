@@ -1,0 +1,32 @@
+# Intellij Idea
+.idea/
+*.iml
+*.iws
+*.ipr
+
+.idea/sonarlint
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/vcs.xml
+.idea/jsLibraryMappings.xml
+
+# Java
+*.class
+*.classpath
+*.project
+
+# Maven
+target
+
+#etc
+*.dmp
+*.trc
+
+#load demand
+temp_unzip_tus
+temp_dir
+
+.jpb
+
+

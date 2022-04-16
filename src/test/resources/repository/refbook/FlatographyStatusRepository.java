@@ -1,0 +1,2 @@
+public interface FlatographyStatusRepository extends RefBookRepository<FlatographyStatusEntity>{
+}

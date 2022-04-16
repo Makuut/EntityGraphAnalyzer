@@ -1,0 +1,2 @@
+public interface AccreditationStatementTypeRepository extends RefBookRepository<AccreditationStatementTypeEntity> {
+}

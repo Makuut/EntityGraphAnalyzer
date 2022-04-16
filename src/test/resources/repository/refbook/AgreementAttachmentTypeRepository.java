@@ -1,0 +1,2 @@
+public interface AgreementAttachmentTypeRepository extends RefBookRepository<AgreementAttachmentTypeEntity> {
+}

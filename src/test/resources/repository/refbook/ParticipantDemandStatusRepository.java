@@ -1,0 +1,2 @@
+public interface ParticipantDemandStatusRepository extends RefBookRepository<ParticipantDemandStatusEntity> {
+}

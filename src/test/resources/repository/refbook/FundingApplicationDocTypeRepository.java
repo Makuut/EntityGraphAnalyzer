@@ -1,0 +1,2 @@
+public interface FundingApplicationDocTypeRepository extends RefBookRepository<FundingApplicationDocTypeEntity> {
+}
