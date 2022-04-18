@@ -6,6 +6,6 @@
 В repositoryFilePattern указывается шаблон поиска файлов интерфесов репозиториев. Не обязательное. По умолчанию ".*Repository.java".
 В entityFilePatternуказывается шаблон поиска файлов интерфесов репозиториев. Не обязательное. По умолчанию ".*Entity.java".
 2.2) В тегах executions и execution указать id = process, phase = validate 
-2.3) В теге goals указать goal = analyze
+2.3) В теге goals указать goal = analyzer
        
-3) Плагин будет запущен при install, validate и цели entity-graph-analyzer:analyze
+3) Плагин будет запущен при install, validate и цели entity-graph-analyzer:analyzer
