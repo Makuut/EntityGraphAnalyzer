@@ -61,4 +61,15 @@ class StringUtilsTest {
 
         assertEquals(expected, actual);
     }
+
+    @Test
+    @DisplayName("Получение имени клаасса")
+    void getClassName() {
+        String source = "org.package.class.Entity";
+        String expected = "Entity";
+
+        String actual = StringUtils.getClassName(source);
+
+        assertEquals(expected, actual);
+    }
 }

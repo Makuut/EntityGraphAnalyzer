@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static org.makuut.StringUtils.getClassName;
 import static org.makuut.StringUtils.getValue;
 
 /**
@@ -37,9 +38,10 @@ public class EntityFileProcessor {
             JavaSource src = projectBuilder.addSource(file);
             JavaClass entityClass = src.getClasses().get(0);
             String entityClassName = entityClass.getName();
+            JavaClass superJavaClass = entityClass.getSuperJavaClass();
 
-            if (entityClass.getSuperJavaClass() != null && !Objects.equals(entityClass.getSuperJavaClass().getName(), "Object")) {
-                classAndSuperclass.put(entityClassName, entityClass.getSuperJavaClass().getName());
+            if (superJavaClass != null && !Objects.equals(superJavaClass.getName(), "Object")) {
+                classAndSuperclass.put(entityClassName, getClassName(superJavaClass.getName()));
             }
 
             HashMap<String, String> nameAndType = new HashMap<>();
@@ -54,11 +56,7 @@ public class EntityFileProcessor {
                 if (!typeName.matches(ENTITY_POSTFIX)) {
                     continue;
                 }
-                if (typeName.contains(DOT)) {
-                    int index = typeName.lastIndexOf(DOT);
-                    typeName = typeName.substring(index + 1);
-                }
-                nameAndType.put(field.getName(), typeName);
+                nameAndType.put(field.getName(), getClassName(typeName));
             }
             entityAndFields.put(entityClassName, nameAndType);
         }

@@ -9,6 +9,7 @@ public class StringUtils {
     private static final String PLUS = "+";
     private static final String PLUS_PATTERN = "\\+";
     private static final String WHITESPACE = " ";
+    private static final String DOT = ".";
 
     /**
      * Удаляет начальную и конечную двойные кавычки
@@ -65,10 +66,10 @@ public class StringUtils {
     }
 
     /**
-     * Объедияет строки разделеные "+"
+     * Объедияет граф разделеный "+"
      *
      * @param str Строка
-     * @return Объединенная строка
+     * @return Объединенный граф
      */
     public static String joinGraph(String str) {
         if (!str.contains(PLUS)) {
@@ -83,5 +84,19 @@ public class StringUtils {
             joined.append(replace);
         }
         return joined.toString();
+    }
+
+    /**
+     * Получает имя класса, удалением директорий
+     *
+     * @param str Строка
+     * @return Объединенная строка
+     */
+    public static String getClassName(String str) {
+        if (str.contains(DOT)) {
+            int index = str.lastIndexOf(DOT);
+            return str.substring(index + 1);
+        }
+        return str;
     }
 }
