@@ -75,7 +75,7 @@ public class EntityGraphAnalyzerPlugin extends AbstractMojo {
                         HashMap<String, String> nameAndType = entitiesWithFields.get(changedEntity);
 
                         if (!nameAndType.containsKey(field)) {
-                            getLog().info("В классе " + changedEntity + " отсутствует поле-сущность " + field + ", указанное в " + changedEntity);
+                            getLog().info("В классе " + changedEntity + " отсутствует поле-сущность " + field + ", указанное в " + graph);
                             break;
                         }
                         changedEntity = nameAndType.get(field);
