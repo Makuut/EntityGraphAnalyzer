@@ -59,7 +59,7 @@ class EntityGraphAnalyzerPluginTest {
                         HashMap<String, String> nameAndType = entitiesWithFields.get(changedEntity);
 
                         if (!nameAndType.containsKey(field)) {
-                            System.out.println("В классе " + entity + " отсутствует поле-сущность " + field + ", указанное в " + graph);
+                            System.out.println("В классе " + changedEntity + " отсутствует поле-сущность " + field + ", указанное в " + graph);
                             break;
                         }
                         changedEntity = nameAndType.get(field);
