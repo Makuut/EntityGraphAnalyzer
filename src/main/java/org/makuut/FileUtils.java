@@ -12,7 +12,7 @@ public class FileUtils {
     /**
      * @param pattern   Шаблон по которому определяются искомые файлы
      * @param directory Директория для поиска
-     * @param result    Карта сущностей и графы к нему, которая будет заполнена
+     * @param result    Список найденных файлов
      */
     public static void search(final String pattern, final File directory, List<File> result) {
         for (final File file : Objects.requireNonNull(directory.listFiles())) {

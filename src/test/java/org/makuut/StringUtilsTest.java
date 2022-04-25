@@ -68,7 +68,7 @@ class StringUtilsTest {
         String source = "org.package.class.Entity";
         String expected = "Entity";
 
-        String actual = StringUtils.getClassName(source);
+        String actual = StringUtils.getTypeName(source);
 
         assertEquals(expected, actual);
     }

@@ -14,7 +14,7 @@ import static org.makuut.StringUtils.*;
  */
 public class EntityGraphProcessor {
 
-    private static final String ENTITY_GRAPH_ANNOTATION_NAME = "org.springframework.data.jpa.repository.EntityGraph";
+    private static final String ENTITY_GRAPH_ANNOTATION_NAME = "EntityGraph";
     private static final String ATTRIBUTE_PATHS_PARAMETER_NAME = "attributePaths";
     private static final String COMMA_PATTERN = "\\,";
     private static final String COMMA = ",";
@@ -25,10 +25,11 @@ public class EntityGraphProcessor {
     /**
      * Формирует общую карту сущностей и относящихся к нему графов (из репозиториев и сущносетй)
      *
-     * @param repositories Список предствалений файлов репозиториев
+     * @param repositories Список репозиториев с графами
+     * @param entities Список сущностей с графами
      * @return Карта сущностей и графов к нему
      */
-    public static HashMap<String, Set<String>> getEntitiesAndTheirGraphs(List<File> repositories, List<File> entities) throws IOException {
+    public static HashMap<String, Set<String>> getEntitiesAndTheirGraphs(List<JavaClass> repositories, List<JavaClass> entities) throws IOException {
         HashMap<String, List<Object>> entitiesAndTheirGraphs = getEntitiesAndTheirGraphsFromRepository(repositories);
         entitiesAndTheirGraphs.putAll(getEntitiesAndTheirGraphsFromEntities(entities));
 
@@ -41,16 +42,15 @@ public class EntityGraphProcessor {
     /**
      * Формирует карту сущностей и относящихся к нему графов из репозиториев
      *
-     * @param repositories Список предствалений файлов репозиториев
+     * @param repositories Список репозиториев с графами
      * @return Карта сущностей и графов к нему
      */
-    public static HashMap<String, List<Object>> getEntitiesAndTheirGraphsFromRepository(List<File> repositories) throws IOException {
+    public static HashMap<String, List<Object>> getEntitiesAndTheirGraphsFromRepository(List<JavaClass> repositories) throws IOException {
         HashMap<String, List<Object>> returnTypeAndGraphs = new HashMap<>();
         String entityName = null;
         List<Object> graphs = new ArrayList<>();
-        for (File file : repositories) {
-            JavaClass repositoryInterface = getRepository(file);
-            List<JavaMethod> methods = repositoryInterface.getMethods();
+        for (JavaClass javaClass : repositories) {
+            List<JavaMethod> methods = javaClass.getMethods();
             for (JavaMethod method : methods) {
                 List<JavaAnnotation> annotations = method.getAnnotations();
                 if (annotations.isEmpty()) {
@@ -60,7 +60,7 @@ public class EntityGraphProcessor {
                 for (JavaAnnotation annotation : annotations) {
                     JavaClass annotationType = annotation.getType();
                     String name = annotationType.getName();
-                    if (!ENTITY_GRAPH_ANNOTATION_NAME.equals(name)) {
+                    if (!StringUtils.compareTypeNames(name, ENTITY_GRAPH_ANNOTATION_NAME)) {
                         continue;
                     }
                     attributePaths = annotation.getNamedParameter(ATTRIBUTE_PATHS_PARAMETER_NAME);
@@ -74,18 +74,12 @@ public class EntityGraphProcessor {
                 }
             }
             if (entityName != null) {
-                returnTypeAndGraphs.put(entityName, new ArrayList<Object>(graphs));
+                returnTypeAndGraphs.put(entityName, new ArrayList<>(graphs));
                 entityName = null;
             }
             graphs.clear();
         }
         return returnTypeAndGraphs;
-    }
-
-    private static JavaClass getRepository(File file) throws IOException {
-        JavaProjectBuilder projectBuilder = new JavaProjectBuilder();
-        JavaSource src = projectBuilder.addSource(file);
-        return src.getClasses().get(0);
     }
 
     /**
@@ -94,7 +88,7 @@ public class EntityGraphProcessor {
      * @param entities Список файлов сущностей
      * @return Карта сущностей и графов к нему
      */
-    public static HashMap<String, List<Object>> getEntitiesAndTheirGraphsFromEntities(List<File> entities) throws IOException {
+    public static HashMap<String, List<Object>> getEntitiesAndTheirGraphsFromEntities(List<JavaClass> entities) throws IOException {
         HashMap<String, List<Object>> returnTypeAndGraphs = new HashMap<>();
 //        TODO Написать реализацию
         return returnTypeAndGraphs;

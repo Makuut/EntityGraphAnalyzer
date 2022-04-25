@@ -1,4 +1,4 @@
-\@Entity
+@Entity
 @Table(name = "attachment")
 @Getter
 @Setter

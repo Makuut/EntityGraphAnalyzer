@@ -4,7 +4,7 @@ public interface AccreditationStatementRepository extends SoftDeleteRepository<A
     @Query(nativeQuery = true)
     Integer findNextNumber();
 
-    @EntityGraph(attributePaths = {"bankruptcyCommissioner", "bankruptcyCommissioner.sro", "accreditationStatementType", "status",
+    @EntityGraph(attributePaths = {"bankruptmissioner", "bankruptcyCommissioner.sro", "accreditationStatementType", "status",
             "accreditationStatementDocEntitySet.statementDocType", "accreditationStatementDocEntitySet" +
             ".accreditationStatementDocAttachmentEntitySet.attachment.signatureAttachments.signature"})
     Optional<AccreditationStatementEntity> findFetchById(Integer id);

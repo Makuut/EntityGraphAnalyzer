@@ -87,16 +87,31 @@ public class StringUtils {
     }
 
     /**
-     * Получает имя класса, удалением директорий
+     * Получает имя типа удалением директорий
      *
-     * @param str Строка
-     * @return Объединенная строка
+     * @param str Имя типа
+     * @return Имя типа без директорий
      */
-    public static String getClassName(String str) {
+    public static String getTypeName(String str) {
         if (str.contains(DOT)) {
             int index = str.lastIndexOf(DOT);
             return str.substring(index + 1);
         }
         return str;
     }
+
+    /**
+     * Сравнивает имена типов, если у типа полное имя, то сокращает его
+     *
+     * @param first Имя типа
+     * @param second Имя типа
+     * @return Результат сравнения
+     */
+    public static boolean compareTypeNames(String first, String second) {
+        if (first == null || second == null) {
+            return false;
+        }
+        return getTypeName(first).equals(getTypeName(second));
+    }
+
 }

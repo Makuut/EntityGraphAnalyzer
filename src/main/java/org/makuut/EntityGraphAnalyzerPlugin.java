@@ -1,5 +1,6 @@
 package org.makuut;
 
+import com.thoughtworks.qdox.model.JavaClass;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -13,27 +14,22 @@ import java.util.*;
 
 import static org.makuut.EntityFileProcessor.getEntitiesAndTheirField;
 import static org.makuut.EntityGraphProcessor.getEntitiesAndTheirGraphs;
-import static org.makuut.FileUtils.search;
 
 /**
- * Плагин определяет наличие полей, указанных в @EntityGraph, в классах сущностей, при их отсутствии выводит сообщение
+ * Плагин определяет наличие полей, указанных в @EntityGraph в методах репозиториях и сущностей
+ * у классов-сущностей (имеют @Entity). При отсутствии полей из графа в сущности выводит сообщение
+ *
  * @author Maxim Terentev
  */
 @Mojo(name = "analyzer", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class EntityGraphAnalyzerPlugin extends AbstractMojo {
+    @Parameter(property = "sourceRoot", required = true)
+    private File sourceRoot;
 
-    @Parameter(property = "repositoryDirectory", required = true)
-    private File repositoryDirectory;
-    @Parameter(property = "entityDirectory", required = true)
-    private File entityDirectory;
+    List<JavaClass> onlyEntities = new ArrayList<>();
+    List<JavaClass> graphsInRepo = new ArrayList<>();
+    List<JavaClass> entitiesAndGraphs = new ArrayList<>();
 
-    @Parameter(property = "repositoryFilePattern", defaultValue = ".*Repository.java")
-    private String repositoryFilePattern;
-    @Parameter(property = "entityFilePattern", defaultValue = ".*Entity.java")
-    private String entityFilePattern;
-
-    List<File> existingRepositories = new ArrayList<>();
-    List<File> existingEntities = new ArrayList<>();
     HashMap<String, Set<String>> entitiesWithGraphs = new HashMap<>();
     HashMap<String, HashMap<String, String>> entitiesWithFields = new HashMap<>();
 
@@ -42,18 +38,13 @@ public class EntityGraphAnalyzerPlugin extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (repositoryDirectory == null || entityDirectory == null
-                || !repositoryDirectory.isDirectory() || !entityDirectory.isDirectory()) {
+        if (sourceRoot == null  || !sourceRoot.isDirectory()) {
             return;
         }
-
-        search(repositoryFilePattern, repositoryDirectory, existingRepositories);
-        search(entityFilePattern, entityDirectory, existingEntities);
-
         try {
-            entitiesWithGraphs = getEntitiesAndTheirGraphs(existingRepositories, existingEntities);
-            entitiesWithFields = getEntitiesAndTheirField(existingEntities, StringUtils.getEntityClassPattern(entityFilePattern));
-
+            FileProcessor.fileAnalyze(sourceRoot, onlyEntities, graphsInRepo, entitiesAndGraphs);
+            entitiesWithFields = getEntitiesAndTheirField(onlyEntities);
+            entitiesWithGraphs = getEntitiesAndTheirGraphs(graphsInRepo, entitiesAndGraphs);
             for (Map.Entry<String, Set<String>> entries : entitiesWithGraphs.entrySet()) {
                 String entity = entries.getKey();
 
@@ -87,5 +78,4 @@ public class EntityGraphAnalyzerPlugin extends AbstractMojo {
         }
     }
 }
-
 

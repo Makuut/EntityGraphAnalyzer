@@ -1,18 +1,14 @@
 package org.makuut;
 
-import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaField;
-import com.thoughtworks.qdox.model.JavaSource;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
-import static org.makuut.StringUtils.getClassName;
+import static org.makuut.StringUtils.getTypeName;
 import static org.makuut.StringUtils.getValue;
 
 /**
@@ -20,43 +16,40 @@ import static org.makuut.StringUtils.getValue;
  */
 public class EntityFileProcessor {
 
+    private static final String OBJECT_CLASS_NAME = "Object";
+
     private static final String DOT = ".";
     private static final List<String> collections = List.of("Collection", "List", "ArrayList", "LinkedList", "Set", "SortedSet", "TreeSet", "HashSet", "LinkedHashSet");
 
     /**
-     * Формирует карту сущностей и их полей
+     * Формирует карту сущностей и их полей, на основе всего списка сущностей
      *
-     * @param entities       Список файлов сущностей
-     * @param ENTITY_POSTFIX Окончание класса сущности
+     * @param entities Список сущностей
      * @return Карта сущностей и их полей
      */
-    public static HashMap<String, HashMap<String, String>> getEntitiesAndTheirField(List<File> entities, final String ENTITY_POSTFIX) throws IOException {
+    public static HashMap<String, HashMap<String, String>> getEntitiesAndTheirField(List<JavaClass> entities) throws IOException {
         HashMap<String, HashMap<String, String>> entityAndFields = new HashMap<>();
         HashMap<String, String> classAndSuperclass = new HashMap<>();
-        for (File file : entities) {
-            JavaProjectBuilder projectBuilder = new JavaProjectBuilder();
-            JavaSource src = projectBuilder.addSource(file);
-            JavaClass entityClass = src.getClasses().get(0);
-            String entityClassName = entityClass.getName();
-            JavaClass superJavaClass = entityClass.getSuperJavaClass();
-
-            if (superJavaClass != null && !Objects.equals(superJavaClass.getName(), "Object")) {
-                classAndSuperclass.put(entityClassName, getClassName(superJavaClass.getName()));
+        for (JavaClass entity : entities) {
+            String entityClassName = entity.getName();
+            JavaClass superJavaClass = entity.getSuperJavaClass();
+            if (superJavaClass != null && !StringUtils.compareTypeNames(superJavaClass.getName(), OBJECT_CLASS_NAME)) {
+                classAndSuperclass.put(getTypeName(entityClassName), getTypeName(superJavaClass.getName()));
             }
-
             HashMap<String, String> nameAndType = new HashMap<>();
-            List<JavaField> fields = entityClass.getFields();
-
+            List<JavaField> fields = entity.getFields();
             for (JavaField field : fields) {
                 JavaClass type = field.getType();
                 String typeName = type.getName();
                 if (collections.contains(typeName)) {
                     typeName = getValue(type.getGenericValue());
                 }
-                if (!typeName.matches(ENTITY_POSTFIX)) {
-                    continue;
+                String finalTypeName = typeName;
+                boolean isEntity = entities.stream()
+                        .anyMatch(javaClass -> StringUtils.compareTypeNames(javaClass.getName(), finalTypeName));
+                if (isEntity) {
+                    nameAndType.put(field.getName(), getTypeName(typeName));
                 }
-                nameAndType.put(field.getName(), getClassName(typeName));
             }
             entityAndFields.put(entityClassName, nameAndType);
         }
@@ -64,7 +57,7 @@ public class EntityFileProcessor {
         if (classAndSuperclass.isEmpty()) {
             return entityAndFields;
         }
-        for (Map.Entry<String, String> entry : classAndSuperclass.entrySet()){
+        for (Map.Entry<String, String> entry : classAndSuperclass.entrySet()) {
             String clazz = entry.getKey();
             String superClass = entry.getValue();
             HashMap<String, String> classFields = entityAndFields.get(clazz);
@@ -74,6 +67,6 @@ public class EntityFileProcessor {
             }
             classFields.putAll(superClassFields);
         }
-            return entityAndFields;
+        return entityAndFields;
     }
 }

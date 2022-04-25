@@ -1,5 +1,6 @@
 package org.makuut;
 
+import com.thoughtworks.qdox.model.JavaClass;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -8,36 +9,30 @@ import java.util.*;
 
 import static org.makuut.EntityFileProcessor.getEntitiesAndTheirField;
 import static org.makuut.EntityGraphProcessor.getEntitiesAndTheirGraphs;
-import static org.makuut.FileUtils.search;
 
 class EntityGraphAnalyzerPluginTest {
 
-    private File repositoryDirectory = new File("src/test/resources/repository");
-    private File entityDirectory = new File("src/test/resources/entity");
-    private String repositoryFilePattern = ".*Repository.java";
-    private String entityFilePattern = ".*Entity.java";
+    private File sourceRoot = new File("src/test/resources");
 
-    List<File> existingRepositories = new ArrayList<>();
-    List<File> existingEntities = new ArrayList<>();
+    List<JavaClass> onlyEntities = new ArrayList<>();
+    List<JavaClass> graphsInRepo = new ArrayList<>();
+    List<JavaClass> entitiesAndGraphs = new ArrayList<>();
+
     HashMap<String, Set<String>> entitiesWithGraphs = new HashMap<>();
     HashMap<String, HashMap<String, String>> entitiesWithFields = new HashMap<>();
 
     private static final String DOT = ".";
-    private static final String DOT_FOR_SPLIT = "\\.";
+    private static final String DOT_PATTERN = "\\.";
 
     @Test
     void execute() {
-        if (repositoryDirectory == null || entityDirectory == null) {
+        if (sourceRoot == null || !sourceRoot.isDirectory()) {
             return;
         }
-
-        search(repositoryFilePattern, repositoryDirectory, existingRepositories);
-        search(entityFilePattern, entityDirectory, existingEntities);
-
         try {
-            entitiesWithGraphs = getEntitiesAndTheirGraphs(existingRepositories, existingEntities);
-            entitiesWithFields = getEntitiesAndTheirField(existingEntities, StringUtils.getEntityClassPattern(entityFilePattern));
-
+            FileProcessor.fileAnalyze(sourceRoot, onlyEntities, graphsInRepo, entitiesAndGraphs);
+            entitiesWithFields = getEntitiesAndTheirField(onlyEntities);
+            entitiesWithGraphs = getEntitiesAndTheirGraphs(graphsInRepo, entitiesAndGraphs);
             for (Map.Entry<String, Set<String>> entries : entitiesWithGraphs.entrySet()) {
                 String entity = entries.getKey();
 
@@ -52,7 +47,7 @@ class EntityGraphAnalyzerPluginTest {
                         }
                         continue;
                     }
-                    String[] fields = graph.split(DOT_FOR_SPLIT);
+                    String[] fields = graph.split(DOT_PATTERN);
 
                     String changedEntity = entity;
                     for (String field : fields) {
@@ -69,5 +64,6 @@ class EntityGraphAnalyzerPluginTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 }
