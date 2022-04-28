@@ -46,7 +46,11 @@ public class FileProcessor {
             List<JavaClass> classes = getJavaClass(file);
             boolean isEntity = false;
             boolean isGraphInEntity = false;
+            boolean isGraphInMethod = false;
             for (JavaClass javaClass : classes) {
+                if (isGraphInMethod) {
+                    break;
+                }
                 List<JavaAnnotation> classAnnotations = javaClass.getAnnotations();
                 for (JavaAnnotation classAnnotation : classAnnotations) {
                     JavaClass type = classAnnotation.getType();
@@ -69,10 +73,15 @@ public class FileProcessor {
                     continue;
                 }
                 List<JavaMethod> methods = javaClass.getMethods();
-                boolean isGraphInMethod = false;
                 for (JavaMethod method : methods) {
+                    if (isGraphInMethod) {
+                        break;
+                    }
                     List<JavaAnnotation> methodAnnotations = method.getAnnotations();
                     for (JavaAnnotation methodAnnotation : methodAnnotations) {
+                        if (isGraphInMethod) {
+                            break;
+                        }
                         JavaClass type = methodAnnotation.getType();
                         isGraphInMethod = compareTypeNames(type.getName(), ENTITY_GRAPH_ANNOTATION_NAME);
                     }

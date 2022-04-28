@@ -113,4 +113,16 @@ class EntityFileProcessorTest {
         assertEquals(1, graphsInRepo.size());
         assertEquals(0, entitiesAndGraphs.size());
     }
+
+    @Test
+    @DisplayName("Множество графов в репозиториях")
+    void manyGraphInRepo() throws IOException {
+        File sourceRoot = new File("src/test/resources/for_plugin/repository");
+
+        FileProcessor.fileAnalyze(sourceRoot, onlyEntities, graphsInRepo, entitiesAndGraphs);
+
+        assertEquals(0, onlyEntities.size());
+        assertEquals(23, graphsInRepo.size());
+        assertEquals(0, entitiesAndGraphs.size());
+    }
 }
