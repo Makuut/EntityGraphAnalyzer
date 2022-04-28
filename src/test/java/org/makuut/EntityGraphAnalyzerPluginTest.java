@@ -12,7 +12,7 @@ import static org.makuut.EntityGraphProcessor.getEntitiesAndTheirGraphs;
 
 class EntityGraphAnalyzerPluginTest {
 
-    private File sourceRoot = new File("src/test/resources");
+    private File sourceRoot = new File("src/test/resources/for_plugin");
 
     List<JavaClass> onlyEntities = new ArrayList<>();
     List<JavaClass> graphsInRepo = new ArrayList<>();
@@ -30,6 +30,7 @@ class EntityGraphAnalyzerPluginTest {
             return;
         }
         try {
+            //Проблема нахождения графов в репозитории
             FileProcessor.fileAnalyze(sourceRoot, onlyEntities, graphsInRepo, entitiesAndGraphs);
             entitiesWithFields = getEntitiesAndTheirField(onlyEntities);
             entitiesWithGraphs = getEntitiesAndTheirGraphs(graphsInRepo, entitiesAndGraphs);

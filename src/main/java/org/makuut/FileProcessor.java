@@ -9,7 +9,9 @@ import com.thoughtworks.qdox.model.JavaSource;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.makuut.StringUtils.compareTypeNames;
 
@@ -20,7 +22,7 @@ public class FileProcessor {
 
     private static final String JAVA_FILE_EXTENSION_PATTERN = ".*\\.java";
     private static final String ENTITY_GRAPH_ANNOTATION_NAME = "EntityGraph";
-    private static final String NAMED_ENTITY_GRAPH_ANNOTATION_NAME = "NamedEntityGraph ";
+    private static final String NAMED_ENTITY_GRAPH_ANNOTATION_NAME = "NamedEntityGraph";
     private static final String ENTITY_ANNOTATION_NAME = "Entity";
     private static final String OBJECT_CLASS_NAME = "Object";
     private static List<File> result = new ArrayList<>();
@@ -36,16 +38,14 @@ public class FileProcessor {
     public static void fileAnalyze(File sourceRoot, List<JavaClass> onlyEntities,
                                    List<JavaClass> graphsInRepo, List<JavaClass> entitiesAndGraphs) throws IOException {
 
-        List<JavaClass> superClasses = new ArrayList<>();
-        List<JavaClass> other = new ArrayList<>();
+        Set<JavaClass> superClasses = new HashSet<>();
+        Set<JavaClass> other = new HashSet<>();
         FileUtils.search(JAVA_FILE_EXTENSION_PATTERN, sourceRoot, result);
 
         for (File file : result) {
-            JavaProjectBuilder projectBuilder = new JavaProjectBuilder();
-            JavaSource src = projectBuilder.addSource(file);
-            List<JavaClass> classes = src.getClasses();
+            List<JavaClass> classes = getJavaClass(file);
             boolean isEntity = false;
-            boolean isGraphInClass = false;
+            boolean isGraphInEntity = false;
             for (JavaClass javaClass : classes) {
                 List<JavaAnnotation> classAnnotations = javaClass.getAnnotations();
                 for (JavaAnnotation classAnnotation : classAnnotations) {
@@ -53,11 +53,11 @@ public class FileProcessor {
                     if (!isEntity) {
                         isEntity = compareTypeNames(ENTITY_ANNOTATION_NAME, type.getName());
                     }
-                    if (!isGraphInClass) {
-                        isGraphInClass = compareTypeNames(NAMED_ENTITY_GRAPH_ANNOTATION_NAME, type.getName());
+                    if (!isGraphInEntity) {
+                        isGraphInEntity = compareTypeNames(NAMED_ENTITY_GRAPH_ANNOTATION_NAME, type.getName());
                     }
                 }
-                if (isEntity && isGraphInClass) {
+                if (isEntity && isGraphInEntity) {
                     entitiesAndGraphs.add(javaClass);
                 }
                 if (isEntity) {
@@ -88,16 +88,29 @@ public class FileProcessor {
         superClassAnalyser(superClasses, other, onlyEntities);
     }
 
-    private static void superClassAnalyser(List<JavaClass> superClasses, List<JavaClass> other, List<JavaClass> onlyEntities) {
+    private static List<JavaClass> getJavaClass(File file) throws IOException {
+        JavaProjectBuilder projectBuilder = new JavaProjectBuilder();
+        JavaSource src = projectBuilder.addSource(file);
+        return src.getClasses();
+    }
+
+    private static void superClassAnalyser(Set<JavaClass> superClasses, Set<JavaClass> other, List<JavaClass> onlyEntities) {
         if (superClasses.isEmpty()) {
             return;
         }
-        List<JavaClass> classForRemove = new ArrayList<>();
+        Set<JavaClass> classForRemove = new HashSet<>();
+        Set<JavaClass> classForAdd = new HashSet<>();
         for (JavaClass javaClass : superClasses) {
             String superClassName = javaClass.getName();
-            boolean isPresent = onlyEntities.stream()
+
+            boolean isPresentForAdd = classForAdd.stream().
+                    anyMatch(entity -> compareTypeNames(entity.getName(), superClassName));
+            if (isPresentForAdd) {
+                continue;
+            }
+            boolean isPresentInEntity = onlyEntities.stream()
                     .anyMatch(entity -> compareTypeNames(entity.getName(), superClassName));
-            if (isPresent) {
+            if (isPresentInEntity) {
                 continue;
             }
             JavaClass entityForSave = other.stream()
@@ -108,13 +121,14 @@ public class FileProcessor {
                 continue;
             }
             onlyEntities.add(entityForSave);
-            JavaClass superJavaClass = javaClass.getSuperJavaClass();
+            JavaClass superJavaClass = entityForSave.getSuperJavaClass();
             if (superJavaClass != null && !StringUtils.compareTypeNames(superJavaClass.getName(), OBJECT_CLASS_NAME)) {
-                superClasses.add(superJavaClass);
+                classForAdd.add(superJavaClass);
             }
             classForRemove.add(javaClass);
         }
         superClasses.removeAll(classForRemove);
+        superClasses.addAll(classForAdd);
         superClassAnalyser(superClasses, other, onlyEntities);
     }
 }

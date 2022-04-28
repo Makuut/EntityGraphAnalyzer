@@ -8,6 +8,7 @@
 @Where(clause = BaseEntity.WHERE_CAUSE)
 @Audited(withModifiedFlag = true)
 @AuditOverride(forClass = BaseAttachmentKeyEntity.class)
+@NamedEntityGraph
 public class AccreditationStatementDocAttachmentEntity extends BaseAttachmentKeyEntity<AccreditationStatementDocAttachmentKey>{
 
     @ManyToOne(fetch = FetchType.LAZY)

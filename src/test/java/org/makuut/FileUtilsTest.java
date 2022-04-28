@@ -11,8 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FileUtilsTest {
 
-    private File repositoryDirectory = new File("src/test/resources/repository");
-    private File entityDirectory = new File("src/test/resources/entity");
+    private File repositoryDirectory = new File("src/test/resources/for_plugin/repository");
+    private File entityDirectory = new File("src/test/resources/for_plugin/entity");
     private String repositoryFilePattern = ".*Repository.java";
     private String entityFilePattern = ".*Entity.java";
 
