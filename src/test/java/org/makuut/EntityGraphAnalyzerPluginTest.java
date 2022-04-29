@@ -30,7 +30,6 @@ class EntityGraphAnalyzerPluginTest {
             return;
         }
         try {
-            //Проблема нахождения графов в репозитории
             FileProcessor.fileAnalyze(sourceRoot, onlyEntities, graphsInRepo, entitiesAndGraphs);
             entitiesWithFields = getEntitiesAndTheirField(onlyEntities);
             entitiesWithGraphs = getEntitiesAndTheirGraphs(graphsInRepo, entitiesAndGraphs);

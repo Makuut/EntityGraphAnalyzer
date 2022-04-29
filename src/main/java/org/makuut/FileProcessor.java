@@ -111,15 +111,8 @@ public class FileProcessor {
         Set<JavaClass> classForAdd = new HashSet<>();
         for (JavaClass javaClass : superClasses) {
             String superClassName = javaClass.getName();
-
-            boolean isPresentForAdd = classForAdd.stream().
-                    anyMatch(entity -> compareTypeNames(entity.getName(), superClassName));
-            if (isPresentForAdd) {
-                continue;
-            }
-            boolean isPresentInEntity = onlyEntities.stream()
-                    .anyMatch(entity -> compareTypeNames(entity.getName(), superClassName));
-            if (isPresentInEntity) {
+            if (needToSkip(classForAdd, onlyEntities, superClassName)) {
+                classForRemove.add(javaClass);
                 continue;
             }
             JavaClass entityForSave = other.stream()
@@ -139,6 +132,21 @@ public class FileProcessor {
         superClasses.removeAll(classForRemove);
         superClasses.addAll(classForAdd);
         superClassAnalyser(superClasses, other, onlyEntities);
+    }
+
+    /**
+     * Вспомогательный метод проверяет наличие суперкласса в общем списке сущностей
+     * и в списке для добавления
+     * @param classForAdd Список классов для добавления
+     * @param onlyEntities Список классов-сущностей
+     * @param superClassName Название суперкласса
+     */
+    private static boolean needToSkip(Set<JavaClass> classForAdd, List<JavaClass> onlyEntities, String superClassName) {
+        boolean isPresentForAdd = classForAdd.stream().
+                anyMatch(entity -> compareTypeNames(entity.getName(), superClassName));
+        boolean isPresentInEntity = onlyEntities.stream()
+                .anyMatch(entity -> compareTypeNames(entity.getName(), superClassName));
+        return isPresentForAdd || isPresentInEntity;
     }
 }
 
