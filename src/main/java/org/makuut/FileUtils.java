@@ -10,8 +10,9 @@ import java.util.Objects;
 public class FileUtils {
 
     /**
+     * Рекурсивно обходит все директории корневой директории и по указанному паттерну собирает файлы
      * @param pattern   Шаблон по которому определяются искомые файлы
-     * @param directory Директория для поиска
+     * @param directory Корневая директория для поиска
      * @param result    Список найденных файлов
      */
     public static void search(final String pattern, final File directory, List<File> result) {

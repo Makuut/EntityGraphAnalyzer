@@ -30,17 +30,6 @@ class StringUtilsTest {
     }
 
     @Test
-    @DisplayName("Удаление расширения из паттерна файла")
-    void getEntityClassPatternTest() {
-        String source = ".*Entity.java";
-        String expected = ".*Entity";
-
-        String actual = StringUtils.getEntityClassPattern(source);
-
-        assertEquals(expected, actual);
-    }
-
-    @Test
     @DisplayName("Объединение двух строк")
     void twoString() {
         String source = "accreditationStatementEntitySet.accreditationStatementDocEntitySet\" + \".accreditationStatementDocAttachmentEntitySet.attachment.signatureAttachments.signature";

@@ -36,13 +36,11 @@ class EntityGraphAnalyzerPluginTest {
             entitiesWithGraphs = getEntitiesAndTheirGraphs(graphsInRepo, entitiesAndGraphs);
             for (Map.Entry<String, Set<String>> entries : entitiesWithGraphs.entrySet()) {
                 String entity = entries.getKey();
-
                 Set<String> graphs = entries.getValue();
                 for (String graph : graphs) {
                     if (!graph.contains(DOT)) {
                         String field = graph;
                         HashMap<String, String> nameAndType = entitiesWithFields.get(entity);
-
                         if (!nameAndType.containsKey(field)) {
                             System.out.println("В классе " + entity + " отсутствует поле-сущность " + field + ", указанное в " + graph);
                         }

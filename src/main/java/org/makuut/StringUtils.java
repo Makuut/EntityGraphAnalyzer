@@ -10,6 +10,7 @@ public class StringUtils {
     private static final String PLUS_PATTERN = "\\+";
     private static final String WHITESPACE = " ";
     private static final String DOT = ".";
+    private static final char DOUBLE_QUOTE = '"';
 
     /**
      * Удаляет начальную и конечную двойные кавычки
@@ -18,11 +19,10 @@ public class StringUtils {
      * @return Строка без начальной и конечной двойных кавычек
      */
     public static String deleteQuotes(String str) {
-        str = str.trim();
-        int leftQuote = str.indexOf('"');
-        int rightQuote = str.lastIndexOf('"');
+        int leftQuote = str.indexOf(DOUBLE_QUOTE);
+        int rightQuote = str.lastIndexOf(DOUBLE_QUOTE);
 
-        if (leftQuote == -1 || rightQuote == -1) {
+        if (leftQuote == -1 || rightQuote == -1 || leftQuote == rightQuote) {
             return str;
         }
 
@@ -39,30 +39,16 @@ public class StringUtils {
         int leftBracket = str.indexOf('<');
         int rightBracket = str.indexOf('>');
 
-        if (leftBracket == -1 || rightBracket == -1) {
+        if (leftBracket == -1 || rightBracket == -1 || leftBracket == rightBracket) {
             return str;
         }
 
-        String substring = str.substring(leftBracket + 1, rightBracket);
-        if (substring.contains(WHITESPACE)) {
-            String[] s = substring.split(WHITESPACE);
-            return s[s.length - 1];
+        str = str.substring(leftBracket + 1, rightBracket);
+        if (str.contains(WHITESPACE)) {
+            String[] split = str.split(WHITESPACE);
+            return split[split.length - 1];
         }
-        return substring;
-    }
-
-    /**
-     * Удаление расширения из файла паттерна файла
-     *
-     * @param str Паттерн файла сущности
-     * @return Паттерн класса сущности
-     */
-    public static String getEntityClassPattern(String str) {
-        if (!str.contains(JAVA_FILE_EXTENSION)) {
-            return str;
-        }
-        int index = str.indexOf(JAVA_FILE_EXTENSION);
-        return str.substring(0, index);
+        return str;
     }
 
     /**
@@ -87,9 +73,9 @@ public class StringUtils {
     }
 
     /**
-     * Получает имя типа удалением директорий
+     * Получает имя типа, удалением директорий
      *
-     * @param str Имя типа
+     * @param str Полное имя типа
      * @return Имя типа без директорий
      */
     public static String getTypeName(String str) {
@@ -103,7 +89,7 @@ public class StringUtils {
     /**
      * Сравнивает имена типов, если у типа полное имя, то сокращает его
      *
-     * @param first Имя типа
+     * @param first  Имя типа
      * @param second Имя типа
      * @return Результат сравнения
      */
@@ -113,5 +99,4 @@ public class StringUtils {
         }
         return getTypeName(first).equals(getTypeName(second));
     }
-
 }
