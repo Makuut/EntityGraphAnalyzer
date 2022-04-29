@@ -21,7 +21,7 @@ import static org.makuut.EntityGraphProcessor.getEntitiesAndTheirGraphs;
  *
  * @author Maxim Terentev
  */
-@Mojo(name = "analyzer", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
+@Mojo(name = "analyze", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class EntityGraphAnalyzerPlugin extends AbstractMojo {
     @Parameter(property = "sourceRoot", required = true)
     private File sourceRoot;
