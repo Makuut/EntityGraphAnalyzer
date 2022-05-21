@@ -13,7 +13,8 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.makuut.EntityFileProcessor.getEntitiesAndTheirField;
-import static org.makuut.EntityGraphProcessor.getEntitiesAndTheirGraphs;
+import static org.makuut.EntityGraphProcessorFromRepository.getEntitiesAndTheirGraphsFromRepository;
+import static org.makuut.EntityGraphProcessorFromEntities.getEntitiesAndTheirGraphsFromEntities;
 
 /**
  * Плагин определяет наличие полей, указанных в @EntityGraph в методах репозиториях и сущностей
@@ -23,7 +24,7 @@ import static org.makuut.EntityGraphProcessor.getEntitiesAndTheirGraphs;
  */
 @Mojo(name = "analyze", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class EntityGraphAnalyzerPlugin extends AbstractMojo {
-    @Parameter(property = "sourceRoot", required = true)
+    @Parameter(property = "sourceRoot", defaultValue = "src/main/java")
     private File sourceRoot;
 
     List<JavaClass> onlyEntities = new ArrayList<>();
@@ -44,7 +45,8 @@ public class EntityGraphAnalyzerPlugin extends AbstractMojo {
         try {
             FileProcessor.fileAnalyze(sourceRoot, onlyEntities, graphsInRepo, entitiesAndGraphs);
             entitiesWithFields = getEntitiesAndTheirField(onlyEntities);
-            entitiesWithGraphs = getEntitiesAndTheirGraphs(graphsInRepo, entitiesAndGraphs);
+            entitiesWithGraphs = getEntitiesAndTheirGraphsFromRepository(graphsInRepo);
+            entitiesWithGraphs.putAll(getEntitiesAndTheirGraphsFromEntities(entitiesAndGraphs));
             for (Map.Entry<String, Set<String>> entries : entitiesWithGraphs.entrySet()) {
                 String entity = entries.getKey();
                 Set<String> graphs = entries.getValue();

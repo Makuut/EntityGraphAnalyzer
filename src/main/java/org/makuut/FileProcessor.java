@@ -23,6 +23,7 @@ public class FileProcessor {
     private static final String JAVA_FILE_EXTENSION_PATTERN = ".*\\.java";
     private static final String ENTITY_GRAPH_ANNOTATION_NAME = "EntityGraph";
     private static final String NAMED_ENTITY_GRAPH_ANNOTATION_NAME = "NamedEntityGraph";
+    private static final String NAMED_ENTITY_GRAPHS_ANNOTATION_NAME = "NamedEntityGraphs";
     private static final String ENTITY_ANNOTATION_NAME = "Entity";
     private static final String OBJECT_CLASS_NAME = "Object";
     private static List<File> result = new ArrayList<>();
@@ -58,7 +59,7 @@ public class FileProcessor {
                         isEntity = compareTypeNames(ENTITY_ANNOTATION_NAME, type.getName());
                     }
                     if (!isGraphInEntity) {
-                        isGraphInEntity = compareTypeNames(NAMED_ENTITY_GRAPH_ANNOTATION_NAME, type.getName());
+                        isGraphInEntity = compareTypeNames(NAMED_ENTITY_GRAPH_ANNOTATION_NAME, type.getName()) || compareTypeNames(NAMED_ENTITY_GRAPHS_ANNOTATION_NAME, type.getName());
                     }
                 }
                 if (isEntity && isGraphInEntity) {

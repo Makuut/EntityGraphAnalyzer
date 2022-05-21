@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.makuut.EntityFileProcessor.getEntitiesAndTheirField;
-import static org.makuut.EntityGraphProcessor.getEntitiesAndTheirGraphs;
+import static org.makuut.EntityGraphProcessorFromEntities.getEntitiesAndTheirGraphsFromEntities;
+import static org.makuut.EntityGraphProcessorFromRepository.getEntitiesAndTheirGraphs;
+import static org.makuut.EntityGraphProcessorFromRepository.getEntitiesAndTheirGraphsFromRepository;
 
 class EntityGraphAnalyzerPluginTest {
 
@@ -32,7 +34,8 @@ class EntityGraphAnalyzerPluginTest {
         try {
             FileProcessor.fileAnalyze(sourceRoot, onlyEntities, graphsInRepo, entitiesAndGraphs);
             entitiesWithFields = getEntitiesAndTheirField(onlyEntities);
-            entitiesWithGraphs = getEntitiesAndTheirGraphs(graphsInRepo, entitiesAndGraphs);
+            entitiesWithGraphs = getEntitiesAndTheirGraphsFromRepository(graphsInRepo);
+            entitiesWithGraphs.putAll(getEntitiesAndTheirGraphsFromEntities(entitiesAndGraphs));
             for (Map.Entry<String, Set<String>> entries : entitiesWithGraphs.entrySet()) {
                 String entity = entries.getKey();
                 Set<String> graphs = entries.getValue();
@@ -46,11 +49,9 @@ class EntityGraphAnalyzerPluginTest {
                         continue;
                     }
                     String[] fields = graph.split(DOT_PATTERN);
-
                     String changedEntity = entity;
                     for (String field : fields) {
                         HashMap<String, String> nameAndType = entitiesWithFields.get(changedEntity);
-
                         if (!nameAndType.containsKey(field)) {
                             System.out.println("В классе " + changedEntity + " отсутствует поле-сущность " + field + ", указанное в " + graph);
                             break;
@@ -62,6 +63,5 @@ class EntityGraphAnalyzerPluginTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }

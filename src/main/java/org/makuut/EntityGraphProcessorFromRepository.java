@@ -1,42 +1,39 @@
 package org.makuut;
 
-import com.thoughtworks.qdox.JavaProjectBuilder;
-import com.thoughtworks.qdox.model.*;
+import com.thoughtworks.qdox.model.JavaAnnotation;
+import com.thoughtworks.qdox.model.JavaClass;
+import com.thoughtworks.qdox.model.JavaMethod;
+import com.thoughtworks.qdox.model.JavaType;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static org.makuut.EntityGraphProcessorFromEntities.getEntitiesAndTheirGraphsFromEntities;
 import static org.makuut.StringUtils.*;
 
 /**
- * Обработчик файлов репозиториев
+ * Обработчик репозиториев для получения графов
  */
-public class EntityGraphProcessor {
+public class EntityGraphProcessorFromRepository {
 
-    private static final String ENTITY_GRAPH_ANNOTATION_NAME = "EntityGraph";
-    private static final String ATTRIBUTE_PATHS_PARAMETER_NAME = "attributePaths";
     private static final String COMMA_PATTERN = "\\,";
     private static final String COMMA = ",";
     private static final String PLUS = "+";
 
-    private static final List<String> collections = List.of("Set", "List");
+    private static final String ENTITY_GRAPH_ANNOTATION_NAME = "EntityGraph";
+    private static final String ATTRIBUTE_PATHS_PARAMETER_NAME = "attributePaths";
 
     /**
      * Формирует общую карту сущностей и относящихся к нему графов (из репозиториев и сущносетй)
      *
      * @param repositories Список репозиториев с графами
-     * @param entities Список сущностей с графами
+     * @param entities     Список сущностей с графами
      * @return Карта сущностей и графов к нему
      */
     public static HashMap<String, Set<String>> getEntitiesAndTheirGraphs(List<JavaClass> repositories, List<JavaClass> entities) throws IOException {
-        HashMap<String, List<Object>> entitiesAndTheirGraphs = getEntitiesAndTheirGraphsFromRepository(repositories);
+        HashMap<String, Set<String>> entitiesAndTheirGraphs = getEntitiesAndTheirGraphsFromRepository(repositories);
         entitiesAndTheirGraphs.putAll(getEntitiesAndTheirGraphsFromEntities(entities));
-
-        HashMap<String, Set<String>> changedEntitiesAndTheirGraphs = new HashMap<>();
-
-        entitiesAndTheirGraphs.forEach((s, lo) -> changedEntitiesAndTheirGraphs.put(s, changeGraphsToList(lo)));
-        return changedEntitiesAndTheirGraphs;
+        return entitiesAndTheirGraphs;
     }
 
     /**
@@ -45,8 +42,9 @@ public class EntityGraphProcessor {
      * @param repositories Список репозиториев с графами
      * @return Карта сущностей и графов к нему
      */
-    public static HashMap<String, List<Object>> getEntitiesAndTheirGraphsFromRepository(List<JavaClass> repositories) throws IOException {
+    public static HashMap<String, Set<String>> getEntitiesAndTheirGraphsFromRepository(List<JavaClass> repositories) throws IOException {
         HashMap<String, List<Object>> returnTypeAndGraphs = new HashMap<>();
+        HashMap<String, Set<String>> changedEntitiesAndTheirGraphs = new HashMap<>();
         String entityName = null;
         List<Object> graphs = new ArrayList<>();
         for (JavaClass javaClass : repositories) {
@@ -79,19 +77,8 @@ public class EntityGraphProcessor {
             }
             graphs.clear();
         }
-        return returnTypeAndGraphs;
-    }
-
-    /**
-     * Формирует карту сущностей и относящихся к нему графов из репозиториев
-     *
-     * @param entities Список файлов сущностей
-     * @return Карта сущностей и графов к нему
-     */
-    public static HashMap<String, List<Object>> getEntitiesAndTheirGraphsFromEntities(List<JavaClass> entities) throws IOException {
-        HashMap<String, List<Object>> returnTypeAndGraphs = new HashMap<>();
-//        TODO Написать реализацию
-        return returnTypeAndGraphs;
+        returnTypeAndGraphs.forEach((s, lo) -> changedEntitiesAndTheirGraphs.put(s, changeGraphsFormat(lo)));
+        return changedEntitiesAndTheirGraphs;
     }
 
     /**
@@ -100,30 +87,25 @@ public class EntityGraphProcessor {
      * @param pureGraphs Карта сущностей и графов к нему
      * @return Список графов
      */
-    public static Set<String> changeGraphsToList(List<Object> pureGraphs) {
+    public static Set<String> changeGraphsFormat(List<Object> pureGraphs) {
         Set<String> graphs = new HashSet<>();
-
         if (pureGraphs == null) {
             return graphs;
         }
-
-        for(Object graph: pureGraphs){
+        for (Object graph : pureGraphs) {
             String pureGraphsString = graph.toString();
 
             if (pureGraphsString.length() < 3) {
                 continue;
             }
-
             int leftBracket = pureGraphsString.indexOf('[');
             int rightBracket = pureGraphsString.lastIndexOf(']');
             pureGraphsString = pureGraphsString.substring(leftBracket + 1, rightBracket);
-
             if (!pureGraphsString.contains(COMMA)) {
                 pureGraphsString = deleteQuotes(pureGraphsString);
                 graphs.add(pureGraphsString);
                 continue;
             }
-
             String[] split = pureGraphsString.split(COMMA_PATTERN);
             for (String str : split) {
                 str = deleteQuotes(str);
@@ -135,4 +117,7 @@ public class EntityGraphProcessor {
         }
         return graphs;
     }
+
+
 }
+
