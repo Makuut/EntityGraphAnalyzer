@@ -10,6 +10,7 @@ import com.thoughtworks.qdox.model.impl.DefaultJavaAnnotation;
 import java.io.IOException;
 import java.util.*;
 
+import static org.makuut.CollectionUtils.isBlank;
 import static org.makuut.StringUtils.compareTypeNames;
 import static org.makuut.StringUtils.deleteQuotes;
 
@@ -39,7 +40,7 @@ public class EntityGraphProcessorFromEntities {
         HashMap<String, Set<String>> entitiesAndTheirGraphs = new HashMap<>();
         for (JavaClass entity : entities) {
             String name = entity.getName();
-            Set<String> graphs = new HashSet<String>();
+            Set<String> graphs = new HashSet<>();
             List<JavaAnnotation> annotations = entity.getAnnotations();
             for (JavaAnnotation annotation : annotations) {
                 if (compareTypeNames(NAMED_ENTITY_GRAPH_ANNOTATION_NAME, annotation.getType().getName())) {
@@ -136,11 +137,11 @@ public class EntityGraphProcessorFromEntities {
 
                 if (value1 != null && subgraphs1 != null && keySubgraphs1 == null) {
                     String nameSubgraph = deleteQuotes(((Constant) subgraphs1).getImage());
-                    StringBuilder graph = new StringBuilder(nameSubgraph);
-                    //TODO переписать наоборот
-                    String subgraph = subgraphAndName.get(nameSubgraph);
-                    graph.append("." + subgraph);
-                    graphs.add(graph.toString());
+                    String node = deleteQuotes(((Constant) value1).getImage());
+                    subgraphAndName.entrySet().stream().filter(entry -> nameSubgraph.equals(entry.getValue()))
+                            .forEach(entry -> {
+                                graphs.add(node + "." + entry.getKey());
+                            });
                 }
             } else if (attributeNodes instanceof AnnotationValueList) {
                 List<AnnotationValue> valueList = ((AnnotationValueList) attributeNodes).getValueList();
@@ -152,11 +153,11 @@ public class EntityGraphProcessorFromEntities {
 
                         if (value1 != null && subgraphs1 != null && keySubgraphs1 == null) {
                             String nameSubgraph = deleteQuotes(((Constant) subgraphs1).getImage());
-                            StringBuilder graph = new StringBuilder(nameSubgraph);
-                            //TODO переписать наоборот
-                            String subgraph = subgraphAndName.get(nameSubgraph);
-                            graph.append("." + subgraph);
-                            graphs.add(graph.toString());
+                            String node = deleteQuotes(((Constant) value1).getImage());
+                            subgraphAndName.entrySet().stream().filter(entry -> nameSubgraph.equals(entry.getValue()))
+                                    .forEach(entry -> {
+                                        graphs.add(node + "." + entry.getKey());
+                                    });
                         }
                     }
                 }
@@ -169,7 +170,7 @@ public class EntityGraphProcessorFromEntities {
     }
 
     /**
-     * Формирукт карту с подграфом и именем начального подграфа,
+     * Формирует карту с подграфом и именем начального подграфа,
      * который будет использоваться для присоединения к attributeNodes
      *
      * @param subgraphs Параметр subgraphs у аннотации NamedEntityGraph
@@ -180,41 +181,31 @@ public class EntityGraphProcessorFromEntities {
         if (subgraphs == null) {
             return subgraphAndName;
         }
-
         HashMap<String, HashMap<String, String>> subNames_Nodes_RefSubNames = new HashMap<>();
-
-        //namedSubgraphs один не в массиве
         if (subgraphs instanceof DefaultJavaAnnotation) {
             HashMap<String, String> valueNameSubgraph = new HashMap<>();
             AnnotationValue propertyName = ((DefaultJavaAnnotation) subgraphs).getProperty(NAME);
             if (propertyName == null) {
                 return subgraphAndName;
             }
-            //получаем имя namedSubgraphs, который должен быть ключом для nameValueSubgraph
             String name = deleteQuotes(((Constant) propertyName).getImage());
             AnnotationValue propertyAttributeNode = ((DefaultJavaAnnotation) subgraphs).getProperty(ATTRIBUTE_NODES);
             if (propertyAttributeNode == null) {
                 return subgraphAndName;
             }
-            //получаем один attributeNode не в массиве
             if (propertyAttributeNode instanceof DefaultJavaAnnotation) {
                 AnnotationValue value1 = ((DefaultJavaAnnotation) propertyAttributeNode).getProperty(VALUE);
                 AnnotationValue subgraphs1 = ((DefaultJavaAnnotation) propertyAttributeNode).getProperty(SUBGRAPHS);
                 AnnotationValue keySubgraphs1 = ((DefaultJavaAnnotation) propertyAttributeNode).getProperty(KEY_SUBGRAPHS);
                 if (value1 != null && subgraphs1 == null && keySubgraphs1 == null) {
                     String value = deleteQuotes(value1.toString());
-                    //у attributeNode только value
                     valueNameSubgraph.put(value, null);
                 } else if (value1 != null && subgraphs1 != null && keySubgraphs1 == null) {
                     String value = deleteQuotes(value1.toString());
                     String subgraphName = deleteQuotes(subgraphs1.toString());
-                    //у attributeNode только value и subgraphs
                     valueNameSubgraph.put(value, subgraphName);
                 }
-                //сохранить в тройноую карту
                 subNames_Nodes_RefSubNames.put(name, valueNameSubgraph);
-
-                //получаем много attributeNode не в массиве
             } else if (propertyAttributeNode instanceof AnnotationValueList) {
                 List<AnnotationValue> attributeNodes = ((AnnotationValueList) propertyAttributeNode).getValueList();
                 for (AnnotationValue annotationValue : attributeNodes) {
@@ -224,23 +215,18 @@ public class EntityGraphProcessorFromEntities {
                         AnnotationValue keySubgraphs1 = ((DefaultJavaAnnotation) annotationValue).getProperty(KEY_SUBGRAPHS);
                         if (value1 != null && subgraphs1 == null && keySubgraphs1 == null) {
                             String value = deleteQuotes(value1.toString());
-                            //у attributeNode только value
                             valueNameSubgraph.put(value, null);
                         } else if (value1 != null && subgraphs1 != null && keySubgraphs1 == null) {
                             String value = deleteQuotes(value1.toString());
                             String subgraphName = deleteQuotes(subgraphs1.toString());
-                            //у attributeNode только value и subgraphs
                             valueNameSubgraph.put(value, subgraphName);
                         }
                     }
                 }
-                //сохранить в тройную карту
                 subNames_Nodes_RefSubNames.put(name, valueNameSubgraph);
             }
-            //namedSubgraphs в массиве
         } else if (subgraphs instanceof AnnotationValueList) {
             List<AnnotationValue> nameSubgraphList = ((AnnotationValueList) subgraphs).getValueList();
-            //берем каждый namedSubgraphs отдельно
             for (AnnotationValue nameSubgraph : nameSubgraphList) {
                 HashMap<String, String> valueNameSubgraph = new HashMap<>();
                 if (nameSubgraph instanceof DefaultJavaAnnotation) {
@@ -248,32 +234,24 @@ public class EntityGraphProcessorFromEntities {
                     if (propertyName == null) {
                         return subgraphAndName;
                     }
-                    //получаем имя namedSubgraphs, который должен быть ключом для nameValueSubgraph
                     String name = deleteQuotes(((Constant) propertyName).getImage());
-
                     AnnotationValue propertyAttributeNode = ((DefaultJavaAnnotation) nameSubgraph).getProperty(ATTRIBUTE_NODES);
                     if (propertyAttributeNode == null) {
                         return subgraphAndName;
                     }
-                    //получаем один attributeNode не в массиве
                     if (propertyAttributeNode instanceof DefaultJavaAnnotation) {
                         AnnotationValue value1 = ((DefaultJavaAnnotation) propertyAttributeNode).getProperty(VALUE);
                         AnnotationValue subgraphs1 = ((DefaultJavaAnnotation) propertyAttributeNode).getProperty(SUBGRAPHS);
                         AnnotationValue keySubgraphs1 = ((DefaultJavaAnnotation) propertyAttributeNode).getProperty(KEY_SUBGRAPHS);
                         if (value1 != null && subgraphs1 == null && keySubgraphs1 == null) {
                             String value = deleteQuotes(value1.toString());
-                            //у attributeNode только value
                             valueNameSubgraph.put(value, null);
                         } else if (value1 != null && subgraphs1 != null && keySubgraphs1 == null) {
                             String value = deleteQuotes(value1.toString());
                             String subgraphName = deleteQuotes(subgraphs1.toString());
-                            //у attributeNode только value и subgraphs
                             valueNameSubgraph.put(value, subgraphName);
                         }
-                        //сохранить в тройную карту
                         subNames_Nodes_RefSubNames.put(name, valueNameSubgraph);
-
-                        //attributeNodes в массиве
                     } else if (propertyAttributeNode instanceof AnnotationValueList) {
                         List<AnnotationValue> attributeNodes = ((AnnotationValueList) propertyAttributeNode).getValueList();
                         for (AnnotationValue annotationValue : attributeNodes) {
@@ -283,12 +261,10 @@ public class EntityGraphProcessorFromEntities {
                                 AnnotationValue keySubgraphs1 = ((DefaultJavaAnnotation) annotationValue).getProperty(KEY_SUBGRAPHS);
                                 if (value1 != null && subgraphs1 == null && keySubgraphs1 == null) {
                                     String value = deleteQuotes(value1.toString());
-                                    //у attributeNode только value
                                     valueNameSubgraph.put(value, null);
                                 } else if (value1 != null && subgraphs1 != null && keySubgraphs1 == null) {
                                     String value = deleteQuotes(value1.toString());
                                     String subgraphName = deleteQuotes(subgraphs1.toString());
-                                    //у attributeNode только value и subgraphs
                                     valueNameSubgraph.put(value, subgraphName);
                                 }
                             }
@@ -304,34 +280,79 @@ public class EntityGraphProcessorFromEntities {
     /**
      * Изменяет формат представления подграфов
      *
-     * @param subNames_Nodes_RefSubNames Карта названия подграфа и карта упзла с именем дальнейшего подграфом
+     * @param subNames_Nodes_RefSubNames Карта названия подграфа и карта узла с именем дальнейшего подграфом
      * @return Карта всех подграфа одного имени подграфа
      */
     private static HashMap<String, String> changeSubgraphsFormat(HashMap<String, HashMap<String, String>> subNames_Nodes_RefSubNames) {
         HashMap<String, String> subgraphAndName = new HashMap<>();
-        List<String> finalSubgraphs = new ArrayList<>();
-        List<StringBuilder> variableSubgraphs = new ArrayList<>();
-
-        //Главный цикл который проходится по всем подграфам
-        for (Map.Entry<String, HashMap<String, String>> subName_Nodes_RefSubNames : subNames_Nodes_RefSubNames.entrySet()) {
-            String subgraphName = subName_Nodes_RefSubNames.getKey();
-            fillFinalSubgraphs(variableSubgraphs, finalSubgraphs, subName_Nodes_RefSubNames.getValue(), subNames_Nodes_RefSubNames);
-            for (String subgraph : finalSubgraphs) {
-                subgraphAndName.put(subgraph, subgraphName);
+        for (Map.Entry<String, HashMap<String, String>> outerEntry : subNames_Nodes_RefSubNames.entrySet()) {
+            String subgraphName = outerEntry.getKey();
+            HashMap<String, String> nodes_RefSubNames = outerEntry.getValue();
+            if (isBlank(nodes_RefSubNames)) {
+                continue;
             }
+            List<String> finalSubgraphs = new ArrayList<>();
+            for (Map.Entry<String, String> innerEntry : nodes_RefSubNames.entrySet()) {
+                String node = innerEntry.getKey();
+                String refSubName = innerEntry.getValue();
+                if (existsNodes(refSubName, subNames_Nodes_RefSubNames) == 0) {
+                    finalSubgraphs.add(node);
+                    continue;
+                }
+
+                recursiveComplete(node, refSubName, finalSubgraphs, subNames_Nodes_RefSubNames);
+            }
+            finalSubgraphs.forEach(finalSubgraph -> subgraphAndName.put(finalSubgraph, subgraphName));
         }
         return subgraphAndName;
     }
 
-    private static void fillFinalSubgraphs(List<StringBuilder> variableSubgraphs, List<String> finalSubgraphs,
-                                           HashMap<String, String> nodesAndRefSubNames, HashMap<String, HashMap<String, String>> subNames_nodes_refSubNames) {
-        //Для имени подграфа нет ноды и ссылки
-        if (nodesAndRefSubNames == null || nodesAndRefSubNames.isEmpty()) {
-            return;
+    /**
+     * Рекурсивный метод формирует подграфы
+     *
+     * @param previousNode Название сформированного узла
+     * @param refSubName Название подграфа
+     * @param finalSubgraphs Карда сформированных подграфов
+     * @param subNames_Nodes_RefSubNames Карта имен подграфов с узлами
+     */
+    private static void recursiveComplete(String previousNode, String refSubName, List<String> finalSubgraphs,
+                           HashMap<String, HashMap<String, String>> subNames_Nodes_RefSubNames) {
+        for (Map.Entry<String, HashMap<String, String>> entry : subNames_Nodes_RefSubNames.entrySet()) {
+            String subgraphName = entry.getKey();
+            HashMap<String, String> nodes_RefSubNames = entry.getValue();
+            if (refSubName.equals(subgraphName)) {
+                for (Map.Entry<String, String> innerEntry : nodes_RefSubNames.entrySet()) {
+                    String nextNode = previousNode + "." + innerEntry.getKey();
+                    String nextRefSubName = innerEntry.getValue();
+                    if (existsNodes(nextRefSubName, subNames_Nodes_RefSubNames) == 0) {
+                        finalSubgraphs.add(nextNode);
+                        continue;
+                    }
+                    recursiveComplete(nextNode, nextRefSubName, finalSubgraphs, subNames_Nodes_RefSubNames);
+                }
+            }
         }
-
     }
 
+    /**
+     * Определяет количество узлов у подграфа
+     *
+     * @param refSubName Название подграфа
+     * @param subNames_Nodes_RefSubNames Карта имен подграфов с узлами
+     * @return Количество графов
+     */
+    private static int existsNodes(String refSubName, HashMap<String, HashMap<String, String>> subNames_Nodes_RefSubNames) {
+        if (refSubName == null) {
+            return 0;
+        }
+        for (Map.Entry<String, HashMap<String, String>> entry : subNames_Nodes_RefSubNames.entrySet()) {
+            String subName2 = entry.getKey();
+            if (refSubName.equals(subName2) && !isBlank(entry.getValue())) {
+                return entry.getValue().size();
+            }
+        }
+        return 0;
+    }
 
     /**
      * Получает список графов из типа AnnotationValue
@@ -344,5 +365,4 @@ public class EntityGraphProcessorFromEntities {
 
         return graphs;
     }
-
 }

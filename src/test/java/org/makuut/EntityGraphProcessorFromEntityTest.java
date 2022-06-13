@@ -80,7 +80,7 @@ public class EntityGraphProcessorFromEntityTest {
     @DisplayName("В параметрах имеются attributeNodes и subgraphs, attributeNodes имеет value и subgraphs не в массиве." +
             "subgraphs имеет один NamedSubgraph не в массиве.")
     void test5() throws IOException {
-        String expected = "";
+        String expected = "{Test5=[node1.node3]}";
 
         HashMap<String, Set<String>> result = getEntitiesAndTheirGraphsFromEntities(getJavaClass(test5));
 
@@ -90,7 +90,7 @@ public class EntityGraphProcessorFromEntityTest {
     @Test
     @DisplayName("В параметрах имеются attributeNodes и subgraphs, attributeNodes имеет value и subgraphs в массиве")
     void test6() throws IOException {
-        String expected = "";
+        String expected = "{Test6=[node1.node3, node2.node4]}";
 
         HashMap<String, Set<String>> result = getEntitiesAndTheirGraphsFromEntities(getJavaClass(test6));
 
@@ -101,17 +101,11 @@ public class EntityGraphProcessorFromEntityTest {
     @DisplayName("В параметрах имеются attributeNodes и subgraphs, attributeNodes имеет value и subgraphs в массиве." +
             "subgraphs имеет несколько attributeNodes в массиве")
     void test7() throws IOException {
-        String expected = "";
+        String expected = "{Test7=[node1.node2, node1.node3]}";
 
         HashMap<String, Set<String>> result = getEntitiesAndTheirGraphsFromEntities(getJavaClass(test7));
 
         assertEquals(expected, result.toString());
-    }
-
-    private static List<JavaClass> getJavaClass(File file) throws IOException {
-        JavaProjectBuilder projectBuilder = new JavaProjectBuilder();
-        JavaSource src = projectBuilder.addSource(file);
-        return src.getClasses();
     }
 
     @Test
@@ -122,5 +116,11 @@ public class EntityGraphProcessorFromEntityTest {
         HashMap<String, Set<String>> result = getEntitiesAndTheirGraphsFromEntities(getJavaClass(test8));
 
         assertEquals(expected, result.toString());
+    }
+
+    private static List<JavaClass> getJavaClass(File file) throws IOException {
+        JavaProjectBuilder projectBuilder = new JavaProjectBuilder();
+        JavaSource src = projectBuilder.addSource(file);
+        return src.getClasses();
     }
 }
