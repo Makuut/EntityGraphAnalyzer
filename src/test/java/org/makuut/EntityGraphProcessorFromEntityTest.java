@@ -26,6 +26,10 @@ public class EntityGraphProcessorFromEntityTest {
     File test7 = new File("src/test/resources/for_entity_graph_from_entities/Test7.java");
     File test8 = new File("src/test/resources/for_entity_graph_from_entities/Test8.java");
 
+    File test10 = new File("src/test/resources/for_entity_graph_from_entities/Test10.java");
+    File test11 = new File("src/test/resources/for_entity_graph_from_entities/Test11.java");
+    File test12 = new File("src/test/resources/for_entity_graph_from_entities/Test12.java");
+
     @Test
     @DisplayName("Аннотация не имеет параметров")
     void test0() throws IOException {
@@ -111,9 +115,39 @@ public class EntityGraphProcessorFromEntityTest {
     @Test
     @DisplayName("В параметрах имеются attributeNodes и массив subgraphs")
     void test8() throws IOException {
-        String expected = "";
+        String expected = "{Test8=[node2.node6, node2.node5, node1.node3, node3.node8.node12, node3.node7.node10.node11, node3.node7.node10.node12, node0, node3.node8.node11, node3.node7.node9]}";
 
         HashMap<String, Set<String>> result = getEntitiesAndTheirGraphsFromEntities(getJavaClass(test8));
+
+        assertEquals(expected, result.toString());
+    }
+
+    @Test
+    @DisplayName("Пустой NamedEntityGraphs")
+    void test10() throws IOException {
+        String expected = "{}";
+
+        HashMap<String, Set<String>> result = getEntitiesAndTheirGraphsFromEntities(getJavaClass(test10));
+
+        assertEquals(expected, result.toString());
+    }
+
+    @Test
+    @DisplayName("NamedEntityGraphs с двумя простыми NamedEntityGraph")
+    void test11() throws IOException {
+        String expected = "{Test11=[node2, node1]}";
+
+        HashMap<String, Set<String>> result = getEntitiesAndTheirGraphsFromEntities(getJavaClass(test11));
+
+        assertEquals(expected, result.toString());
+    }
+
+    @Test
+    @DisplayName("NamedEntityGraphs с двумя сложными NamedEntityGraph")
+    void test12() throws IOException {
+        String expected = "{Test8=[node2.node6, node2.node5, node3.node8.node12, node3.node7.node10.node11, node3.node7.node10.node12, node1.node3 , node0, node3.node8.node11, node3.node7.node9]}";
+
+        HashMap<String, Set<String>> result = getEntitiesAndTheirGraphsFromEntities(getJavaClass(test12));
 
         assertEquals(expected, result.toString());
     }

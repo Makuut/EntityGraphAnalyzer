@@ -51,7 +51,7 @@ public class EntityGraphProcessorFromEntities {
                     AnnotationValue value = annotation.getProperty(VALUE);
                     List<AnnotationValue> graphAnnotations = ((AnnotationValueList) value).getValueList();
                     for (AnnotationValue graphAnnotation : graphAnnotations) {
-                        Set<String> graphsFromAnnotationValue = getGraphsFromAnnotationValue(graphAnnotation);
+                        Set<String> graphsFromAnnotationValue = getGraphsFromJavaAnnotation((JavaAnnotation) graphAnnotation);
                         graphs.addAll(graphsFromAnnotationValue);
                     }
                 }
@@ -102,9 +102,6 @@ public class EntityGraphProcessorFromEntities {
                 }
             }
         } else if (attributeNodes != null && subgraphs != null && subclass_subgraphs == null) {
-            //0)Провести анализ subgraphs поместить в структуру
-
-            //1)Проверить attributeNodes, там где указано только value в массиве или нет, записать
             if (attributeNodes instanceof DefaultJavaAnnotation) {
                 AnnotationValue value1 = ((DefaultJavaAnnotation) attributeNodes).getProperty(VALUE);
                 AnnotationValue subgraphs1 = ((DefaultJavaAnnotation) attributeNodes).getProperty(SUBGRAPHS);
@@ -129,7 +126,6 @@ public class EntityGraphProcessorFromEntities {
                     }
                 }
             }
-
             if (attributeNodes instanceof DefaultJavaAnnotation) {
                 AnnotationValue value1 = ((DefaultJavaAnnotation) attributeNodes).getProperty(VALUE);
                 AnnotationValue subgraphs1 = ((DefaultJavaAnnotation) attributeNodes).getProperty(SUBGRAPHS);
@@ -162,10 +158,7 @@ public class EntityGraphProcessorFromEntities {
                     }
                 }
             }
-            //2)Там где value и subgraph берем карту полученую от анализа subgraph и соединяем ее с value
-            System.out.println();
         }
-
         return graphs;
     }
 
@@ -352,17 +345,5 @@ public class EntityGraphProcessorFromEntities {
             }
         }
         return 0;
-    }
-
-    /**
-     * Получает список графов из типа AnnotationValue
-     *
-     * @param annotation Аннотация NamedEntityGraph в объекте AnnotationValue
-     * @return Список графов
-     */
-    private static Set<String> getGraphsFromAnnotationValue(AnnotationValue annotation) {
-        Set<String> graphs = new HashSet<String>();
-
-        return graphs;
     }
 }
