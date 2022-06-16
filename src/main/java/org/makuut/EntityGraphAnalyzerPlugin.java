@@ -17,8 +17,8 @@ import static org.makuut.EntityGraphProcessorFromRepository.getEntitiesAndTheirG
 import static org.makuut.EntityGraphProcessorFromEntities.getEntitiesAndTheirGraphsFromEntities;
 
 /**
- * Плагин определяет наличие полей, указанных в @EntityGraph в методах репозиториях и сущностей
- * у классов-сущностей (имеют @Entity). При отсутствии полей из графа в сущности выводит сообщение
+ * Плагин определяет наличие полей, указанных в @EntityGraph в методах репозиториях и в @NamedEntityGraph(s) сущностей
+ * у классов-сущностей (имеют @Entity). При отсутствии полей из графа в сущности выводится сообщение
  *
  * @author Maxim Terentev
  */
