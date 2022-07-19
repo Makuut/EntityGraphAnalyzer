@@ -2,7 +2,7 @@
   
   Врианты подключения: 
   1) Плагин необходимо скомпилировать (mvn clean install), чтобы он попал в локальный maven репозторий. В проекте указать подключение к плагину. 
-В теге configuration указать возможные параметры: в sourceRoot указывается путь к корневой папке. Если не указывать явно, будет src/main/java по умолчанию. В тегах executions и execution указать id = process, phase = validate. В теге goals указать goal = analyze. Плагин будет запущен при install, validate и цели entity-graph-analyzer:analyzer.
+В теге configuration указать возможные параметры: в sourceRoot указывается путь к корневой папке. Если не указывать явно, будет src/main/java по умолчанию. В тегах executions и execution указать id = process, phase = validate. В теге goals указать goal = analyze. Плагин будет запущен при install, validate и цели entity-graph-analyzer:analyze.
   2) В тестовом классе EntityGraphAnalyzerPluginTest в переменной sourceRoot указать путь к проекту. Запустить тест execute.
 
   Использование плагина: 
