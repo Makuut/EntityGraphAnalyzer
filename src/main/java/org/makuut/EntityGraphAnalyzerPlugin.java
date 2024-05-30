@@ -7,14 +7,15 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.makuut.processor.FileProcessor;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static org.makuut.EntityFileProcessor.getEntitiesAndTheirField;
-import static org.makuut.EntityGraphProcessorFromRepository.getEntitiesAndTheirGraphsFromRepository;
-import static org.makuut.EntityGraphProcessorFromEntities.getEntitiesAndTheirGraphsFromEntities;
+import static org.makuut.processor.EntityFileProcessor.getEntitiesAndTheirField;
+import static org.makuut.processor.EntityGraphProcessorFromEntities.getEntitiesAndTheirGraphsFromEntities;
+import static org.makuut.processor.EntityGraphProcessorFromRepository.getEntitiesAndTheirGraphsFromRepository;
 
 /**
  * Плагин определяет наличие полей, указанных в @EntityGraph в методах репозиториях и в @NamedEntityGraph(s) сущностей
@@ -22,7 +23,7 @@ import static org.makuut.EntityGraphProcessorFromEntities.getEntitiesAndTheirGra
  *
  * @author Maxim Terentev
  */
-@Mojo(name = "analyze", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
+@Mojo(name = "entity_graph_analyze", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class EntityGraphAnalyzerPlugin extends AbstractMojo {
     @Parameter(property = "sourceRoot", defaultValue = "src/main/java")
     private File sourceRoot;

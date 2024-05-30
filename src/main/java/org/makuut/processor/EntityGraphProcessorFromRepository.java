@@ -1,15 +1,16 @@
-package org.makuut;
+package org.makuut.processor;
 
 import com.thoughtworks.qdox.model.JavaAnnotation;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaMethod;
 import com.thoughtworks.qdox.model.JavaType;
+import org.makuut.util.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
 
-import static org.makuut.EntityGraphProcessorFromEntities.getEntitiesAndTheirGraphsFromEntities;
-import static org.makuut.StringUtils.*;
+import static org.makuut.processor.EntityGraphProcessorFromEntities.getEntitiesAndTheirGraphsFromEntities;
+import static org.makuut.util.StringUtils.*;
 
 /**
  * Обработчик репозиториев для получения графов
@@ -89,7 +90,7 @@ public class EntityGraphProcessorFromRepository {
      */
     public static Set<String> changeGraphsFormat(List<Object> pureGraphs) {
         Set<String> graphs = new HashSet<>();
-        if (pureGraphs == null) {
+        if (pureGraphs == null || pureGraphs.isEmpty()) {
             return graphs;
         }
         for (Object graph : pureGraphs) {

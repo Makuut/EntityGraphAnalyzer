@@ -1,10 +1,11 @@
-package org.makuut;
+package org.makuut.processor;
 
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaSource;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.makuut.processor.EntityGraphProcessorFromRepository;
 
 import java.io.File;
 import java.io.IOException;

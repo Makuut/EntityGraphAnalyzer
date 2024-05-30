@@ -1,4 +1,4 @@
-package org.makuut;
+package org.makuut.processor;
 
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaClass;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.makuut.EntityGraphProcessorFromEntities.getEntitiesAndTheirGraphsFromEntities;
+import static org.makuut.processor.EntityGraphProcessorFromEntities.getEntitiesAndTheirGraphsFromEntities;
 
 public class EntityGraphProcessorFromEntityTest {
     File test0 = new File("src/test/resources/for_entity_graph_from_entities/Test0.java");

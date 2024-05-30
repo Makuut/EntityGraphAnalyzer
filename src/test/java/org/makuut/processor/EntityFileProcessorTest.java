@@ -1,13 +1,13 @@
-package org.makuut;
+package org.makuut.processor;
 
 import com.thoughtworks.qdox.model.JavaClass;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.makuut.processor.FileProcessor;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

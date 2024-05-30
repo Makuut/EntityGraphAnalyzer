@@ -1,10 +1,12 @@
-package org.makuut;
+package org.makuut.processor;
 
 import com.thoughtworks.qdox.JavaProjectBuilder;
 import com.thoughtworks.qdox.model.JavaAnnotation;
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaMethod;
 import com.thoughtworks.qdox.model.JavaSource;
+import org.makuut.util.FileUtils;
+import org.makuut.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.makuut.StringUtils.compareTypeNames;
+import static org.makuut.util.StringUtils.compareTypeNames;
 
 /**
  * Обработчик файлов

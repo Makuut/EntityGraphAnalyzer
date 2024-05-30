@@ -1,7 +1,8 @@
-package org.makuut;
+package org.makuut.util;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.makuut.util.StringUtils;
 
 import static org.junit.jupiter.api.Assertions.*;
 

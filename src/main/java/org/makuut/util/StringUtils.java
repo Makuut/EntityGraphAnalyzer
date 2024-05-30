@@ -1,4 +1,4 @@
-package org.makuut;
+package org.makuut.util;
 
 /**
  * Вспомогательный класс для работы со строками

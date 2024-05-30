@@ -1,4 +1,4 @@
-package org.makuut;
+package org.makuut.processor;
 
 import com.thoughtworks.qdox.model.JavaAnnotation;
 import com.thoughtworks.qdox.model.JavaClass;
@@ -10,9 +10,9 @@ import com.thoughtworks.qdox.model.impl.DefaultJavaAnnotation;
 import java.io.IOException;
 import java.util.*;
 
-import static org.makuut.CollectionUtils.isBlank;
-import static org.makuut.StringUtils.compareTypeNames;
-import static org.makuut.StringUtils.deleteQuotes;
+import static org.makuut.util.CollectionUtils.isBlank;
+import static org.makuut.util.StringUtils.compareTypeNames;
+import static org.makuut.util.StringUtils.deleteQuotes;
 
 /**
  * Обработчик сущностей для получения графов

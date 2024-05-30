@@ -1,15 +1,16 @@
-package org.makuut;
+package org.makuut.processor;
 
 import com.thoughtworks.qdox.model.JavaClass;
 import com.thoughtworks.qdox.model.JavaField;
+import org.makuut.util.StringUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.makuut.StringUtils.getTypeName;
-import static org.makuut.StringUtils.getValue;
+import static org.makuut.util.StringUtils.getTypeName;
+import static org.makuut.util.StringUtils.getValue;
 
 /**
  * Обработчик файлов сущностей

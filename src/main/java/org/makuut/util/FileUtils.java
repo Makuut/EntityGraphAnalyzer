@@ -1,4 +1,4 @@
-package org.makuut;
+package org.makuut.util;
 
 import java.io.File;
 import java.util.List;

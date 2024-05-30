@@ -2,15 +2,15 @@ package org.makuut;
 
 import com.thoughtworks.qdox.model.JavaClass;
 import org.junit.jupiter.api.Test;
+import org.makuut.processor.FileProcessor;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static org.makuut.EntityFileProcessor.getEntitiesAndTheirField;
-import static org.makuut.EntityGraphProcessorFromEntities.getEntitiesAndTheirGraphsFromEntities;
-import static org.makuut.EntityGraphProcessorFromRepository.getEntitiesAndTheirGraphs;
-import static org.makuut.EntityGraphProcessorFromRepository.getEntitiesAndTheirGraphsFromRepository;
+import static org.makuut.processor.EntityFileProcessor.getEntitiesAndTheirField;
+import static org.makuut.processor.EntityGraphProcessorFromEntities.getEntitiesAndTheirGraphsFromEntities;
+import static org.makuut.processor.EntityGraphProcessorFromRepository.getEntitiesAndTheirGraphsFromRepository;
 
 class EntityGraphAnalyzerPluginTest {
 
