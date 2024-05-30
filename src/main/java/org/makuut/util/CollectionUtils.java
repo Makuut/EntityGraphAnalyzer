@@ -7,6 +7,9 @@ import java.util.Map;
  */
 public class CollectionUtils {
 
+    private CollectionUtils() {
+    }
+
     /**
      * Проверяет карту на null и пустоту
      *

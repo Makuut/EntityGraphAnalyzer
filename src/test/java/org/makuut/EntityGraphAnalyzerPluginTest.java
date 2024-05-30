@@ -8,9 +8,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static org.makuut.processor.EntityFileProcessor.getEntitiesAndTheirField;
-import static org.makuut.processor.EntityGraphProcessorFromEntities.getEntitiesAndTheirGraphsFromEntities;
-import static org.makuut.processor.EntityGraphProcessorFromRepository.getEntitiesAndTheirGraphsFromRepository;
+import static org.makuut.processor.EntityProcessor.getEntitiesAndTheirField;
+import static org.makuut.processor.NamedEntityGraphProcessor.getEntitiesAndTheirGraphsFromEntities;
+import static org.makuut.processor.EntityGraphProcessor.getEntitiesAndTheirGraphsFromRepository;
 
 class EntityGraphAnalyzerPluginTest {
 

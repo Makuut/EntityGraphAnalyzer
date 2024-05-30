@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.makuut.processor.EntityGraphProcessorFromEntities.getEntitiesAndTheirGraphsFromEntities;
+import static org.makuut.processor.NamedEntityGraphProcessor.getEntitiesAndTheirGraphsFromEntities;
 
-public class EntityGraphProcessorFromEntityTest {
+class NamedEntityGraphProcessorTest {
     File test0 = new File("src/test/resources/for_entity_graph_from_entities/Test0.java");
     File test1 = new File("src/test/resources/for_entity_graph_from_entities/Test1.java");
     File test2 = new File("src/test/resources/for_entity_graph_from_entities/Test2.java");

@@ -5,7 +5,9 @@ package org.makuut.util;
  */
 public class StringUtils {
 
-    private static final String JAVA_FILE_EXTENSION = ".java";
+    private StringUtils() {
+    }
+
     private static final String PLUS = "+";
     private static final String PLUS_PATTERN = "\\+";
     private static final String WHITESPACE = " ";

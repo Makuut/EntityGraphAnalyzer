@@ -9,13 +9,17 @@ import org.makuut.util.StringUtils;
 import java.io.IOException;
 import java.util.*;
 
-import static org.makuut.processor.EntityGraphProcessorFromEntities.getEntitiesAndTheirGraphsFromEntities;
+import static org.makuut.processor.NamedEntityGraphProcessor.getEntitiesAndTheirGraphsFromEntities;
 import static org.makuut.util.StringUtils.*;
 
 /**
  * Обработчик репозиториев для получения графов
  */
-public class EntityGraphProcessorFromRepository {
+public class EntityGraphProcessor {
+
+    private EntityGraphProcessor() {
+    }
+
 
     private static final String COMMA_PATTERN = "\\,";
     private static final String COMMA = ",";

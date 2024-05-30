@@ -15,9 +15,12 @@ import static org.makuut.util.StringUtils.compareTypeNames;
 import static org.makuut.util.StringUtils.deleteQuotes;
 
 /**
- * Обработчик сущностей для получения графов
+ * Обработчик сущностей для получения именованных графов
  */
-public class EntityGraphProcessorFromEntities {
+public class NamedEntityGraphProcessor {
+
+    private NamedEntityGraphProcessor() {
+    }
 
     private static final String VALUE = "value";
     private static final String NAME = "name";

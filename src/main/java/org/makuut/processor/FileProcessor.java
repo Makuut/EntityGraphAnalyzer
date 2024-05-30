@@ -22,13 +22,16 @@ import static org.makuut.util.StringUtils.compareTypeNames;
  */
 public class FileProcessor {
 
+    private FileProcessor() {
+    }
+
     private static final String JAVA_FILE_EXTENSION_PATTERN = ".*\\.java";
     private static final String ENTITY_GRAPH_ANNOTATION_NAME = "EntityGraph";
     private static final String NAMED_ENTITY_GRAPH_ANNOTATION_NAME = "NamedEntityGraph";
     private static final String NAMED_ENTITY_GRAPHS_ANNOTATION_NAME = "NamedEntityGraphs";
     private static final String ENTITY_ANNOTATION_NAME = "Entity";
     private static final String OBJECT_CLASS_NAME = "Object";
-    private static List<File> result = new ArrayList<>();
+    private static final List<File> result = new ArrayList<>();
 
     /**
      * Распределяет все файлы на относящиеся к сущносям (имеют @Entity),
@@ -140,8 +143,9 @@ public class FileProcessor {
     /**
      * Вспомогательный метод проверяет наличие суперкласса в общем списке сущностей
      * и в списке для добавления
-     * @param classForAdd Список классов для добавления
-     * @param onlyEntities Список классов-сущностей
+     *
+     * @param classForAdd    Список классов для добавления
+     * @param onlyEntities   Список классов-сущностей
      * @param superClassName Название суперкласса
      */
     private static boolean needToSkip(Set<JavaClass> classForAdd, List<JavaClass> onlyEntities, String superClassName) {

@@ -15,11 +15,13 @@ import static org.makuut.util.StringUtils.getValue;
 /**
  * Обработчик файлов сущностей
  */
-public class EntityFileProcessor {
+public class EntityProcessor {
+
+    private EntityProcessor() {
+    }
 
     private static final String OBJECT_CLASS_NAME = "Object";
 
-    private static final String DOT = ".";
     private static final List<String> collections = List.of("Collection", "List", "ArrayList", "LinkedList", "Set", "SortedSet", "TreeSet", "HashSet", "LinkedHashSet");
 
     /**
